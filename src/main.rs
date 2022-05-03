@@ -1,3 +1,5 @@
+mod args;
+
 macro_rules! square {
     ($num:expr) => {
         $num * $num
