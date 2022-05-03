@@ -43,7 +43,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "argh",
- "pico-args",
 ]
 
 [[package]]
@@ -54,12 +53,6 @@ checksum = "6d621efb26863f0e9924c6ac577e8275e5e6b77455db64ffa6c65c904e9e132c"
 dependencies = [
  "unicode-segmentation",
 ]
-
-[[package]]
-name = "pico-args"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "db8bcd96cb740d03149cbad5518db9fd87126a10ab519c011893b1754134c468"
 
 [[package]]
 name = "proc-macro2"
