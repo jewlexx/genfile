@@ -2,6 +2,9 @@ mod args;
 
 use std::{fs::File, io::Write};
 
+use clap::StructOpt;
+use strum::IntoEnumIterator;
+
 use args::{ArgError, GenArgs, Measurement};
 
 fn main() -> anyhow::Result<()> {
@@ -27,39 +30,12 @@ fn main() -> anyhow::Result<()> {
 
     let mut file = File::create(path)?;
 
-    if size > u64::from(Measurement::Gigabyte) {
-        let gigs: u64 = size / u64::from(Measurement::Gigabyte);
-        size -= gigs * u64::from(Measurement::Gigabyte);
+    for measurement in Measurement::iter().rev() {
+        let num: u64 = size;
+        size -= num;
 
-        let bytes = Measurement::Gigabyte.into_bytes();
-        for _ in 0..gigs {
-            file.write_all(&bytes)?;
-        }
-    }
-
-    if size > u64::from(Measurement::Megabyte) {
-        let megas: u64 = size / u64::from(Measurement::Megabyte);
-        size -= megas * u64::from(Measurement::Megabyte);
-
-        let bytes = Measurement::Megabyte.into_bytes();
-        for _ in 0..megas {
-            file.write_all(&bytes)?;
-        }
-    }
-
-    if size > u64::from(Measurement::Kilobyte) {
-        let kilos: u64 = size / u64::from(Measurement::Kilobyte);
-        size -= kilos * u64::from(Measurement::Kilobyte);
-
-        let bytes = Measurement::Kilobyte.into_bytes();
-        for _ in 0..kilos {
-            file.write_all(&bytes)?;
-        }
-    }
-
-    if size > 0 {
-        let bytes = Measurement::Byte.into_bytes();
-        for _ in 0..size {
+        let bytes = measurement.into_bytes();
+        for _ in 0..(num * u64::from(measurement)) {
             file.write_all(&bytes)?;
         }
     }

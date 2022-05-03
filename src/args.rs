@@ -1,7 +1,9 @@
 use std::{error::Error, fmt::Display};
 
-use argh::FromArgs;
+use clap::Parser;
+use strum::EnumIter;
 
+#[derive(EnumIter, Debug, Clone, Copy)]
 pub enum Measurement {
     Byte,
     Kilobyte,
@@ -44,21 +46,17 @@ impl Measurement {
     }
 }
 
-#[derive(FromArgs)]
-#[argh(description = "A simple demo file generator")]
+#[derive(Parser)]
+#[clap(version, author, about)]
 pub struct GenArgs {
-    #[argh(positional)]
+    /// The size of the final file
     pub size: usize,
 
-    #[argh(option, short = 'm', description = "the data measurement to write")]
+    /// The data measurement to write
+    #[clap(long, short)]
     pub measurement: Option<String>,
 
-    #[argh(option, short = 'p', description = "the file to write to")]
+    /// The file to write to
+    #[clap(long, short)]
     pub path: Option<String>,
-}
-
-impl GenArgs {
-    pub fn parse() -> Self {
-        argh::from_env()
-    }
 }
