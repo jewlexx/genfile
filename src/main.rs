@@ -25,12 +25,8 @@ fn main() -> anyhow::Result<()> {
         .filter(|m| (**m as u8) <= (measurement as u8))
         .rev()
     {
-        println!("{:?}", *measurement);
-
         let num = size;
         size -= num;
-
-        println!("{}", *measurement as u8);
 
         let bytes = measurement.into_bytes();
         for _ in 0..(num * u128::from(*measurement)) {
