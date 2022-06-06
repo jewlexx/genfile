@@ -9,14 +9,13 @@ use args::{GenArgs, Measurement, MEASUREMENTS};
 fn main() -> anyhow::Result<()> {
     let args = GenArgs::parse();
 
-    let measurement: u128 = if let Some(measurement) = args.measurement {
+    let measurement = if let Some(measurement) = args.measurement {
         Measurement::from_arg(measurement.to_lowercase())?
     } else {
         Measurement::Byte
-    }
-    .into();
+    };
 
-    let mut size: u128 = args.size * measurement;
+    let mut size: u128 = args.size * u128::from(measurement);
 
     let cwd = std::env::current_dir()?;
     let path = cwd.join(args.path.unwrap_or_else(|| "file.txt".into()));
@@ -25,7 +24,7 @@ fn main() -> anyhow::Result<()> {
 
     for measurement in MEASUREMENTS
         .iter()
-        .filter(|m| (**m as u128) < measurement)
+        .filter(|m| (**m as u8) <= (measurement as u8))
         .rev()
     {
         println!("{:?}", *measurement);
@@ -33,7 +32,7 @@ fn main() -> anyhow::Result<()> {
         let num = size;
         size -= num;
 
-        println!("{}", num * u128::from(*measurement));
+        println!("{}", *measurement as u8);
 
         let bytes = measurement.into_bytes();
         for _ in 0..(num * u128::from(*measurement)) {
