@@ -2,12 +2,10 @@ mod args;
 
 use std::{fs::File, io::Write};
 
-use clap::StructOpt;
-
 use args::{GenArgs, Measurement, MEASUREMENTS};
 
 fn main() -> anyhow::Result<()> {
-    let args = GenArgs::parse();
+    let args: GenArgs = clap::Parser::parse();
 
     let measurement = if let Some(measurement) = args.measurement {
         Measurement::from_arg(measurement.to_lowercase())?
