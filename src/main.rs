@@ -4,25 +4,19 @@ use std::{fs::File, io::Write};
 
 use clap::StructOpt;
 
-use args::{ArgError, GenArgs, Measurement, MEASUREMENTS};
+use args::{GenArgs, Measurement, MEASUREMENTS};
 
 fn main() -> anyhow::Result<()> {
     let args = GenArgs::parse();
 
-    let measurement: u64 = if let Some(measurement) = args.measurement.map(|x| x.to_lowercase()) {
-        match measurement.as_str() {
-            "byte" | "b" => Ok(Measurement::Byte),
-            "kilobyte" | "kb" | "k" => Ok(Measurement::Kilobyte),
-            "megabyte" | "mb" | "m" => Ok(Measurement::Megabyte),
-            "gigabyte" | "gb" | "g" => Ok(Measurement::Gigabyte),
-            _ => Err(ArgError::InvalidMeasurement(measurement)),
-        }
+    let measurement: u128 = if let Some(measurement) = args.measurement {
+        Measurement::from_arg(measurement.to_lowercase())?
     } else {
-        Ok(Measurement::Byte)
-    }?
+        Measurement::Byte
+    }
     .into();
 
-    let mut size: u64 = args.size as u64 * measurement;
+    let mut size: u128 = args.size * measurement;
 
     let cwd = std::env::current_dir()?;
     let path = cwd.join(args.path.unwrap_or_else(|| "file.txt".into()));
@@ -30,11 +24,11 @@ fn main() -> anyhow::Result<()> {
     let mut file = File::create(path)?;
 
     for measurement in MEASUREMENTS.iter().rev() {
-        let num: u64 = size;
+        let num = size;
         size -= num;
 
         let bytes = measurement.into_bytes();
-        for _ in 0..(num * u64::from(*measurement)) {
+        for _ in 0..(num * u128::from(*measurement)) {
             file.write_all(&bytes)?;
         }
     }

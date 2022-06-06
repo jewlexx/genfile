@@ -10,6 +10,18 @@ pub enum Measurement {
     Gigabyte,
 }
 
+impl Measurement {
+    pub fn from_arg(arg: String) -> Result<Self, ArgError> {
+        match arg.as_str() {
+            "byte" | "b" => Ok(Self::Byte),
+            "kilobyte" | "kb" | "k" => Ok(Measurement::Kilobyte),
+            "megabyte" | "mb" | "m" => Ok(Measurement::Megabyte),
+            "gigabyte" | "gb" | "g" => Ok(Measurement::Gigabyte),
+            _ => Err(ArgError::InvalidMeasurement(arg)),
+        }
+    }
+}
+
 pub const MEASUREMENTS: [Measurement; 4] = [
     Measurement::Byte,
     Measurement::Kilobyte,
@@ -36,17 +48,15 @@ impl Display for ArgError {
     }
 }
 
-impl From<Measurement> for u64 {
-    fn from(measurement: Measurement) -> u64 {
-        let i = measurement as u8;
-
-        1024_i32.pow(i as u32) as u64
+impl From<Measurement> for u128 {
+    fn from(measurement: Measurement) -> u128 {
+        1024_u128.pow(measurement as u32)
     }
 }
 
 impl Measurement {
     pub fn into_bytes(self) -> Vec<u8> {
-        let size: u64 = self.into();
+        let size: u128 = self.into();
 
         vec![0u8; size as usize]
     }
@@ -56,7 +66,7 @@ impl Measurement {
 #[clap(version, author, about)]
 pub struct GenArgs {
     /// The size of the final file
-    pub size: usize,
+    pub size: u128,
 
     /// The data measurement to write
     #[clap(long, short)]
