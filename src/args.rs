@@ -14,9 +14,9 @@ impl Measurement {
     pub fn from_arg(arg: String) -> Result<Self, ArgError> {
         match arg.as_str() {
             "byte" | "b" => Ok(Self::Byte),
-            "kilobyte" | "kb" | "k" => Ok(Measurement::Kilobyte),
-            "megabyte" | "mb" | "m" => Ok(Measurement::Megabyte),
-            "gigabyte" | "gb" | "g" => Ok(Measurement::Gigabyte),
+            "kilobyte" | "kb" | "k" => Ok(Self::Kilobyte),
+            "megabyte" | "mb" | "m" => Ok(Self::Megabyte),
+            "gigabyte" | "gb" | "g" => Ok(Self::Gigabyte),
             _ => Err(ArgError::InvalidMeasurement(arg)),
         }
     }
