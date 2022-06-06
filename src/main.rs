@@ -1,8 +1,11 @@
-mod args;
-
 use std::{fs::File, io::Write};
 
+mod args;
+mod bytes;
+mod error;
+
 use args::{GenArgs, Measurement, MEASUREMENTS};
+use bytes::{Bytes, BytesArray};
 
 fn main() -> anyhow::Result<()> {
     let args: GenArgs = clap::Parser::parse();
@@ -13,24 +16,31 @@ fn main() -> anyhow::Result<()> {
         Measurement::Byte
     };
 
-    let mut size: u128 = args.size * u128::from(measurement);
+    let bytes_size = Bytes::from(measurement);
+
+    let mut size: u128 = args.size * bytes_size.0;
 
     let cwd = std::env::current_dir()?;
     let path = cwd.join(args.path.unwrap_or_else(|| "file.txt".into()));
 
     let mut file = File::create(path)?;
 
-    for measurement in MEASUREMENTS
-        .iter()
-        .filter(|m| (**m as u8) <= (measurement as u8))
-        .rev()
-    {
-        let num = size;
-        size -= num;
+    loop {
+        for measurement in MEASUREMENTS.iter().rev() {
+            if bytes_size.0 < size {
+                continue;
+            }
 
-        let bytes = measurement.into_bytes();
-        for _ in 0..(num * u128::from(*measurement)) {
-            file.write_all(&bytes)?;
+            // Yo I am confused about this too dw I am working on figuring it out
+            let num = size;
+            size -= num;
+
+            let num = num / bytes_size.0;
+
+            let bytes = BytesArray::from(*measurement);
+            for _ in 0..(num * bytes_size.0) {
+                file.write_all(&bytes.0)?;
+            }
         }
     }
 

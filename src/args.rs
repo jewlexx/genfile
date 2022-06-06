@@ -1,6 +1,6 @@
-use std::{error::Error, fmt::Display};
-
 use clap::Parser;
+
+use crate::error::ArgError;
 
 #[derive(Debug, Clone, Copy)]
 pub enum Measurement {
@@ -28,39 +28,6 @@ pub const MEASUREMENTS: [Measurement; 4] = [
     Measurement::Megabyte,
     Measurement::Gigabyte,
 ];
-
-#[derive(Debug)]
-pub enum ArgError {
-    InvalidMeasurement(String),
-}
-
-impl Error for ArgError {}
-
-impl Display for ArgError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ArgError::InvalidMeasurement(measurement) => write!(
-                f,
-                "Invalid Measurement: {}. Must be kb, mb, or gb",
-                measurement,
-            ),
-        }
-    }
-}
-
-impl From<Measurement> for u128 {
-    fn from(measurement: Measurement) -> u128 {
-        1024_u128.pow(measurement as u32)
-    }
-}
-
-impl Measurement {
-    pub fn into_bytes(self) -> Vec<u8> {
-        let size: u128 = self.into();
-
-        vec![0u8; size as usize]
-    }
-}
 
 #[derive(Parser)]
 #[clap(version, author, about)]
