@@ -1,15 +1,21 @@
 use std::{error::Error, fmt::Display};
 
 use clap::Parser;
-use strum::EnumIter;
 
-#[derive(EnumIter, Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub enum Measurement {
     Byte,
     Kilobyte,
     Megabyte,
     Gigabyte,
 }
+
+pub const MEASUREMENTS: [Measurement; 4] = [
+    Measurement::Byte,
+    Measurement::Kilobyte,
+    Measurement::Megabyte,
+    Measurement::Gigabyte,
+];
 
 #[derive(Debug)]
 pub enum ArgError {

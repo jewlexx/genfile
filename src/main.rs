@@ -3,9 +3,8 @@ mod args;
 use std::{fs::File, io::Write};
 
 use clap::StructOpt;
-use strum::IntoEnumIterator;
 
-use args::{ArgError, GenArgs, Measurement};
+use args::{ArgError, GenArgs, Measurement, MEASUREMENTS};
 
 fn main() -> anyhow::Result<()> {
     let args = GenArgs::parse();
@@ -16,7 +15,7 @@ fn main() -> anyhow::Result<()> {
             "kilobyte" | "kb" | "k" => Ok(Measurement::Kilobyte),
             "megabyte" | "mb" | "m" => Ok(Measurement::Megabyte),
             "gigabyte" | "gb" | "g" => Ok(Measurement::Gigabyte),
-            _ => Err(ArgError::InvalidMeasurement(measurement.to_string())),
+            _ => Err(ArgError::InvalidMeasurement(measurement)),
         }
     } else {
         Ok(Measurement::Byte)
@@ -30,12 +29,12 @@ fn main() -> anyhow::Result<()> {
 
     let mut file = File::create(path)?;
 
-    for measurement in Measurement::iter().rev() {
+    for measurement in MEASUREMENTS.iter().rev() {
         let num: u64 = size;
         size -= num;
 
         let bytes = measurement.into_bytes();
-        for _ in 0..(num * u64::from(measurement)) {
+        for _ in 0..(num * u64::from(*measurement)) {
             file.write_all(&bytes)?;
         }
     }
