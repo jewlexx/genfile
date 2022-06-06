@@ -23,9 +23,17 @@ fn main() -> anyhow::Result<()> {
 
     let mut file = File::create(path)?;
 
-    for measurement in MEASUREMENTS.iter().rev() {
+    for measurement in MEASUREMENTS
+        .iter()
+        .filter(|m| (**m as u128) < measurement)
+        .rev()
+    {
+        println!("{:?}", *measurement);
+
         let num = size;
         size -= num;
+
+        println!("{}", num * u128::from(*measurement));
 
         let bytes = measurement.into_bytes();
         for _ in 0..(num * u128::from(*measurement)) {
