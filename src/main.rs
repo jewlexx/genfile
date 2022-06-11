@@ -25,14 +25,17 @@ fn main() -> anyhow::Result<()> {
 
     let mut file = File::create(path)?;
 
-    loop {
-        for measurement in MEASUREMENTS.iter().rev() {
-            if bytes_size.0 < size {
-                continue;
+    'outer: for measurement in MEASUREMENTS.iter().rev() {
+        loop {
+            let bytes_size = Bytes::from(*measurement);
+
+            if size < bytes_size.0 {
+                println!("sadge");
+                continue 'outer;
             }
 
             // Yo I am confused about this too dw I am working on figuring it out
-            let num = size;
+            let num = size / bytes_size.0;
             size -= num;
 
             let num = num / bytes_size.0;
@@ -40,6 +43,10 @@ fn main() -> anyhow::Result<()> {
             let bytes = BytesArray::from(*measurement);
             for _ in 0..(num * bytes_size.0) {
                 file.write_all(&bytes.0)?;
+            }
+
+            if size == 0 {
+                break 'outer;
             }
         }
     }
