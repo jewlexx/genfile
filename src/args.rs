@@ -2,6 +2,8 @@ use clap::Parser;
 
 use crate::error::ArgError;
 
+use crate::bytes::Bytes;
+
 #[derive(Debug, Clone, Copy)]
 pub enum Measurement {
     Byte,
@@ -19,6 +21,10 @@ impl Measurement {
             "gigabyte" | "gb" | "g" => Ok(Self::Gigabyte),
             _ => Err(ArgError::InvalidMeasurement(arg)),
         }
+    }
+
+    pub fn into_bytes(self) -> Bytes {
+        Bytes::from(self)
     }
 }
 
