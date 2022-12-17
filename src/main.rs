@@ -4,7 +4,7 @@ mod args;
 mod bytes;
 mod error;
 
-use args::{GenArgs, Measurement, MEASUREMENTS};
+use args::{GenArgs, Measurement};
 use bytes::{Bytes, BytesArray};
 
 fn write_measurement(
@@ -26,15 +26,15 @@ fn main() -> anyhow::Result<()> {
 
     let measurement = args.measurement;
 
-    let size: u128 = args.size * measurement.into_bytes().0;
+    let size: u128 = args.size * Bytes::from(measurement).0;
 
     let cwd = std::env::current_dir()?;
     let path = cwd.join(args.path.unwrap_or_else(|| "file.txt".into()));
 
-    let gigabytes = size / Measurement::Gigabyte.into_bytes().0;
-    let megabytes = size / Measurement::Megabyte.into_bytes().0 - gigabytes;
-    let kilobytes = size / Measurement::Kilobyte.into_bytes().0 - gigabytes - megabytes;
-    let bytes = size / Measurement::Byte.into_bytes().0 - gigabytes - megabytes - kilobytes;
+    let gigabytes = size / Bytes::from(Measurement::Gigabyte).0;
+    let megabytes = size / Bytes::from(Measurement::Megabyte).0 - gigabytes;
+    let kilobytes = size / Bytes::from(Measurement::Kilobyte).0 - gigabytes - megabytes;
+    let bytes = size / Bytes::from(Measurement::Byte).0 - gigabytes - megabytes - kilobytes;
 
     let mut file = File::create(path)?;
 
