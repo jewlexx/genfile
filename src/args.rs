@@ -28,13 +28,6 @@ impl FromStr for Measurement {
     }
 }
 
-pub const MEASUREMENTS: [Measurement; 4] = [
-    Measurement::Byte,
-    Measurement::Kilobyte,
-    Measurement::Megabyte,
-    Measurement::Gigabyte,
-];
-
 #[derive(Parser)]
 #[clap(version, author, about)]
 pub struct GenArgs {
