@@ -42,7 +42,7 @@ pub struct GenArgs {
     pub size: u128,
 
     /// The data measurement to write
-    #[clap(long, short, default_value_t = Measurement::Byte)]
+    #[clap(long, short, default_value = "byte")]
     pub measurement: Measurement,
 
     /// The file to write to
