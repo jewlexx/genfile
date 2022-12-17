@@ -6,10 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.57"
-clap = { version = "3.1.15", features = ["derive"] }
-derive_more = "0.99.17"
-thiserror = "1.0.31"
+anyhow = "1.0.66"
+clap = { version = "4.0.29", features = ["derive"] }
+thiserror = "1.0.37"
 
 [profile.release]
 opt-level = "s"
