@@ -36,6 +36,11 @@ fn main() -> anyhow::Result<()> {
     let kilobytes = size / Bytes::from(Measurement::Kilobyte).0 - gigabytes - megabytes;
     let bytes = size / Bytes::from(Measurement::Byte).0 - gigabytes - megabytes - kilobytes;
 
+    println!(
+        "GB: {}\nMB: {}\nKB: {}\nB: {}",
+        gigabytes, megabytes, kilobytes, bytes
+    );
+
     let mut file = File::create(path)?;
 
     write_measurement(gigabytes, Measurement::Gigabyte, &mut file)?;
