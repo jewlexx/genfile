@@ -1,10 +1,11 @@
 use std::str::FromStr;
 
 use clap::Parser;
+use derive_more::Display;
 
 use crate::error::ArgError;
 
-#[derive(Debug, Default, Clone, Copy)]
+#[derive(Debug, Display, Default, Clone, Copy)]
 pub enum Measurement {
     #[default]
     Byte,
