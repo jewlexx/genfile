@@ -24,11 +24,7 @@ fn write_measurement(
 fn main() -> anyhow::Result<()> {
     let args: GenArgs = clap::Parser::parse();
 
-    let measurement = if let Some(measurement) = args.measurement {
-        Measurement::from_arg(measurement.to_lowercase())?
-    } else {
-        Measurement::Byte
-    };
+    let measurement = args.measurement;
 
     let size: u128 = args.size * measurement.into_bytes().0;
 

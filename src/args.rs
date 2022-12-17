@@ -1,30 +1,29 @@
+use std::str::FromStr;
+
 use clap::Parser;
 
 use crate::error::ArgError;
 
-use crate::bytes::Bytes;
-
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Default, Clone, Copy)]
 pub enum Measurement {
+    #[default]
     Byte,
     Kilobyte,
     Megabyte,
     Gigabyte,
 }
 
-impl Measurement {
-    pub fn from_arg(arg: String) -> Result<Self, ArgError> {
-        match arg.as_str() {
+impl FromStr for Measurement {
+    type Err = ArgError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
             "byte" | "b" => Ok(Self::Byte),
             "kilobyte" | "kb" | "k" => Ok(Self::Kilobyte),
             "megabyte" | "mb" | "m" => Ok(Self::Megabyte),
             "gigabyte" | "gb" | "g" => Ok(Self::Gigabyte),
-            _ => Err(ArgError::InvalidMeasurement(arg)),
+            _ => Err(ArgError::InvalidMeasurement(s.to_string())),
         }
-    }
-
-    pub fn into_bytes(self) -> Bytes {
-        Bytes::from(self)
     }
 }
 
@@ -42,8 +41,8 @@ pub struct GenArgs {
     pub size: u128,
 
     /// The data measurement to write
-    #[clap(long, short)]
-    pub measurement: Option<String>,
+    #[clap(long, short, default_value_t = Measurement::Byte)]
+    pub measurement: Measurement,
 
     /// The file to write to
     #[clap(long, short)]
